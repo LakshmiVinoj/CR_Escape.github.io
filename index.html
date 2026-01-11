@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Project Index</title>
+
+  <style>
+    :root {
+      --bg: #0b0f14;
+      --card: #121923;
+      --ink: #e6eef8;
+      --muted: #b7c6d9;
+      --accent: #48b3ff;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: linear-gradient(180deg, #0a0e13, #0f1a26 50%, #0a0e13);
+      color: var(--ink);
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Inter, Arial, sans-serif;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+    }
+
+    .container {
+      width: min(900px, 95vw);
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 28px;
+      letter-spacing: 0.4px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 20px;
+    }
+
+    .card {
+      background: var(--card);
+      border-radius: 18px;
+      padding: 22px;
+      border: 1px solid rgba(255,255,255,0.06);
+      box-shadow: 0 10px 28px rgba(0,0,0,0.35);
+    }
+
+    .card h2 {
+      margin-top: 0;
+      margin-bottom: 10px;
+      font-size: 1.2rem;
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    li + li {
+      margin-top: 10px;
+    }
+
+    a {
+      text-decoration: none;
+      color: var(--accent);
+      font-weight: 500;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    .hint {
+      color: var(--muted);
+      font-size: 0.9rem;
+      margin-top: 8px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <h1>📁 Project File Index</h1>
+
+    <div class="grid">
+      <!-- Real to Virtual -->
+      <div class="card">
+        <h2>Real → Virtual</h2>
+        <ul>
+          <li><a href="real_to_virtual/Directions/">Directions</a></li>
+          <li><a href="real_to_virtual/Flashing_lights/">Flashing Lights</a></li>
+          <li><a href="real_to_virtual/poster/">Poster</a></li>
+        </ul>
+        <div class="hint">Physical world → digital representation</div>
+      </div>
+
+      <!-- Virtual to Real -->
+      <div class="card">
+        <h2>Virtual → Real</h2>
+        <ul>
+          <li><a href="virtual_to_real/Keypad/">Keypad</a></li>
+          <li><a href="virtual_to_real/Poster/">Poster</a></li>
+        </ul>
+        <div class="hint">Digital interaction → physical outcome</div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
