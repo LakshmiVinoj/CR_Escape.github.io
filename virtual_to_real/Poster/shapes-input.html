@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>5-Shape Code Puzzle</title>
+<style>
+  :root{
+    --bg:#0b0f14; --card:#111a24; --ink:#e8f0fb; --sub:#a9bfd7;
+    --accent:#48b3ff; --ok:#37d67a; --bad:#ff5e6a;
+  }
+  html,body{height:100%;margin:0;background:linear-gradient(180deg,#081019,#0f1a26);color:var(--ink);
+    font-family:system-ui,-apple-system,Segoe UI,Inter,Roboto,Arial,sans-serif}
+  .wrap{min-height:100%;display:grid;place-items:center;padding:24px}
+  .card{width:min(860px,95vw);background:var(--card);border:1px solid rgba(255,255,255,.07);
+    border-radius:20px;box-shadow:0 12px 34px rgba(0,0,0,.35);padding:26px 22px}
+  h1{margin:0 0 6px;font-size:1.35rem}
+  p{margin:0 0 16px;color:var(--sub)}
+  .row{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+
+  /* Code slots */
+  .slots{margin:14px 0 18px}
+  .slot{
+    width:82px;height:82px;border-radius:16px;background:#0e1722;display:grid;place-items:center;
+    border:1px dashed rgba(255,255,255,.12)
+  }
+  .slot svg{width:56px;height:56px;display:block;}
+
+  /* Shape buttons */
+  .shapes{margin-top:4px}
+  button.shape{
+    display:flex;align-items:center;gap:10px;cursor:pointer;border:1px solid rgba(255,255,255,.12);
+    border-radius:14px;background:#0d1520;color:var(--ink);padding:12px 14px;font-weight:600;
+    transition:filter .2s ease, transform .06s ease
+  }
+  button.shape:hover{filter:brightness(1.08)}
+  button.shape:active{transform:translateY(1px)}
+  button.shape svg{width:22px;height:22px}
+
+  /* Actions */
+  .actions{display:flex;gap:12px;justify-content:center;margin-top:12px}
+  .primary{
+    cursor:pointer;border:0;border-radius:14px;padding:12px 18px;font-weight:700;
+    background:var(--ok);color:#062913;transition:transform .06s ease, filter .2s ease
+  }
+  .ghost{
+    cursor:pointer;border:1px solid rgba(255,255,255,.12);background:transparent;color:var(--ink);
+    border-radius:14px;padding:12px 16px;font-weight:600
+  }
+  .error{text-align:center;color:var(--bad);min-height:22px;margin-top:10px}
+  .shake{animation:shake .35s linear}
+  @keyframes shake{
+    10%,90%{transform:translateX(-1px)}
+    20%,80%{transform:translateX(2px)}
+    30%,50%,70%{transform:translateX(-4px)}
+    40%,60%{transform:translateX(4px)}
+  }
+
+  /* Shape colors */
+  .c-hex { fill:#48e0a4; }
+  .c-tri { fill:#48b3ff; }
+  .c-rect{ fill:#ffd166; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="card" id="card">
+    <h1>Enter the 5-shape code</h1>
+    <p>Click a shape to append it to the code (5 slots). Then press <b>Check</b>.</p>
+
+    <div class="row slots" id="slots" aria-live="polite">
+      <div class="slot" data-idx="0"></div>
+      <div class="slot" data-idx="1"></div>
+      <div class="slot" data-idx="2"></div>
+      <div class="slot" data-idx="3"></div>
+      <div class="slot" data-idx="4"></div>
+    </div>
+
+    <div class="row shapes">
+      <button class="shape" data-shape="hex" aria-label="Add hexagon">
+        <!-- Fixed, perfectly fitting hexagon -->
+        <svg viewBox="0 0 100 100"><polygon class="c-hex" points="50,5 93,28 93,72 50,95 7,72 7,28"/></svg>
+        Hexagon
+      </button>
+      <button class="shape" data-shape="tri" aria-label="Add triangle">
+        <svg viewBox="0 0 100 100"><polygon class="c-tri" points="50,10 95,90 5,90"/></svg>
+        Triangle
+      </button>
+      <button class="shape" data-shape="rect" aria-label="Add rectangle">
+        <svg viewBox="0 0 100 100"><rect class="c-rect" x="15" y="30" width="70" height="40" rx="6"/></svg>
+        Rectangle
+      </button>
+    </div>
+
+    <div class="actions">
+      <button id="resetBtn" class="ghost" type="button">Reset</button>
+      <button id="checkBtn" class="primary" type="button">Check</button>
+    </div>
+
+    <div class="error" id="msg" role="status" aria-live="polite"></div>
+
+    <audio id="sndOK" src="correct.mp3" preload="auto"></audio>
+    <audio id="sndNo" src="wrong.mp3" preload="auto"></audio>
+  </div>
+</div>
+
+<script>
+  const SECRET_CODE = ['rect','tri','rect','hex','rect'];
+  const NEXT_PAGE   = 'shape-output.html';
+  const MAX_LEN = 5;
+
+  const slots = [...document.querySelectorAll('.slot')];
+  const msg = document.getElementById('msg');
+  const card = document.getElementById('card');
+  const sndOK = document.getElementById('sndOK');
+  const sndNo = document.getElementById('sndNo');
+
+  const code = [];
+  const icons = {
+    hex:'<svg viewBox="0 0 100 100"><polygon class="c-hex" points="50,5 93,28 93,72 50,95 7,72 7,28"/></svg>',
+    tri:'<svg viewBox="0 0 100 100"><polygon class="c-tri" points="50,10 95,90 5,90"/></svg>',
+    rect:'<svg viewBox="0 0 100 100"><rect class="c-rect" x="15" y="30" width="70" height="40" rx="6"/></svg>'
+  };
+
+  function render(){
+    slots.forEach((s,i)=>{
+      s.innerHTML = code[i] ? icons[code[i]] : '';
+      s.style.borderStyle = code[i] ? 'solid' : 'dashed';
+    });
+  }
+  function addShape(kind){
+    if (code.length >= MAX_LEN){
+      msg.textContent = "Code is full. Use Reset to try a different sequence.";
+      shake();
+      return;
+    }
+    code.push(kind);
+    msg.textContent = "";
+    render();
+  }
+  function arraysEqual(a,b){ return a.length === b.length && a.every((v,i)=>v===b[i]); }
+  function shake(){ card.classList.remove('shake'); void card.offsetWidth; card.classList.add('shake'); }
+  function reset(){ code.length = 0; msg.textContent = ""; render(); }
+
+  document.querySelectorAll('button.shape').forEach(btn=>{
+    btn.addEventListener('click', ()=> addShape(btn.dataset.shape));
+  });
+  document.getElementById('resetBtn').addEventListener('click', reset);
+
+  document.getElementById('checkBtn').addEventListener('click', async ()=>{
+    msg.textContent = "";
+    if (code.length < MAX_LEN){
+      msg.textContent = "Enter all 5 shapes.";
+      shake();
+      return;
+    }
+    if (arraysEqual(code, SECRET_CODE)){
+      try{
+        const p = sndOK.play(); if (p) await p.catch(()=>{});
+        const go = () => window.location.href = NEXT_PAGE;
+        sndOK.onended = go; setTimeout(go, 900);
+      }catch{ window.location.href = NEXT_PAGE; }
+    }else{
+      msg.textContent = "Incorrect sequence. Try again!";
+      try{ const p = sndNo.play(); if (p) await p.catch(()=>{}); }catch{}
+      shake();
+    }
+  });
+
+  render();
+</script>
+</body>
+</html>

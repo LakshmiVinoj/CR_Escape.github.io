@@ -1,0 +1,228 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Arrow Rotation Puzzle</title>
+<style>
+  :root {
+    --bg:#0b0f14; --card:#111a24; --ink:#e8f0fb; --sub:#a9bfd7;
+    --accent:#37d67a; --accent-ink:#062913; --bad:#ff5e6a;
+  }
+  html,body{
+    height:100%;margin:0;
+    background:linear-gradient(180deg,#081019,#0f1a26);
+    color:var(--ink);
+    font-family:system-ui,-apple-system,Segoe UI,Inter,Roboto,Arial,sans-serif
+  }
+  .wrap{min-height:100%;display:grid;place-items:center;padding:24px}
+  .card{
+    width:min(760px,94vw);
+    background:var(--card);
+    border:1px solid rgba(255,255,255,.07);
+    border-radius:20px;
+    box-shadow:0 12px 34px rgba(0,0,0,.35);
+    padding:26px 22px
+  }
+  h1{margin:0 0 6px;font-size:1.35rem}
+  p{margin:0 0 18px;color:var(--sub)}
+  .grid{display:grid;grid-template-rows:auto auto auto;row-gap:16px}
+  .arrows{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;justify-items:center}
+  .arrow{
+    width:90px;height:90px;display:grid;place-items:center;border-radius:16px;
+    background:linear-gradient(180deg,#0c1520,#0d1a25);
+    border:1px solid rgba(255,255,255,.06);
+    box-shadow:inset 0 0 0 1px rgba(255,255,255,.04);
+  }
+  .arrow svg{
+    width:54px;height:54px;
+    transform:rotate(var(--rot, 0deg));
+    transition:transform .18s ease
+  }
+  .btns{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+  .rot{
+    appearance:none;cursor:pointer;border:0;border-radius:14px;
+    padding:12px 0;background:#0d1520;
+    border:1px solid rgba(255,255,255,.08);
+    color:var(--ink);font-weight:600;
+    transition:filter .15s ease, transform .06s ease;
+    display:grid;place-items:center
+  }
+  .rot:hover{filter:brightness(1.08)}
+  .rot:active{transform:translateY(1px)}
+  .rot svg{width:22px;height:22px}
+  .actions{display:flex;gap:12px;justify-content:center;margin-top:6px}
+  .primary{
+    cursor:pointer;border:0;border-radius:14px;padding:12px 18px;font-weight:700;
+    background:var(--accent);color:var(--accent-ink);
+    transition:transform .06s ease, filter .2s ease
+  }
+  .primary:hover{filter:brightness(1.05)}
+  .primary:active{transform:translateY(1px)}
+  .ghost{
+    cursor:pointer;border:1px solid rgba(255,255,255,.12);
+    background:transparent;color:var(--ink);
+    border-radius:14px;padding:12px 16px;font-weight:600
+  }
+  .error{text-align:center;color:var(--bad);min-height:22px;margin-top:10px}
+  .shake{animation:shake .35s linear}
+  @keyframes shake{
+    10%,90%{transform:translateX(-1px)}
+    20%,80%{transform:translateX(2px)}
+    30%,50%,70%{transform:translateX(-4px)}
+    40%,60%{transform:translateX(4px)}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="card" id="card">
+    <h1>Rotate the Arrows</h1>
+    <p>Click on the ⟳ button to rotate the arrows 90° clockwise. Arrange them to the secret orientation, then press <b>Check</b>.</p>
+
+    <div class="grid">
+      <!-- Row 1: Arrows -->
+      <div class="arrows" id="arrows">
+        <div class="arrow" data-idx="0"><svg viewBox="0 0 24 24" fill="none">
+          <path d="M12 3 L6 11 H18 Z" fill="hsl(140 70% 45%)"/>
+          <rect x="11" y="11" width="2" height="9" rx="1" fill="hsl(140 70% 45%)"/>
+        </svg></div>
+        <div class="arrow" data-idx="1"><svg viewBox="0 0 24 24" fill="none">
+          <path d="M12 3 L6 11 H18 Z" fill="hsl(140 70% 45%)"/>
+          <rect x="11" y="11" width="2" height="9" rx="1" fill="hsl(140 70% 45%)"/>
+        </svg></div>
+        <div class="arrow" data-idx="2"><svg viewBox="0 0 24 24" fill="none">
+          <path d="M12 3 L6 11 H18 Z" fill="hsl(140 70% 45%)"/>
+          <rect x="11" y="11" width="2" height="9" rx="1" fill="hsl(140 70% 45%)"/>
+        </svg></div>
+        <div class="arrow" data-idx="3"><svg viewBox="0 0 24 24" fill="none">
+          <path d="M12 3 L6 11 H18 Z" fill="hsl(140 70% 45%)"/>
+          <rect x="11" y="11" width="2" height="9" rx="1" fill="hsl(140 70% 45%)"/>
+        </svg></div>
+      </div>
+
+      <!-- Row 2: CW buttons for each arrow -->
+      <div class="btns">
+        <button class="rot" data-idx="0" aria-label="Rotate arrow 1 clockwise">
+          <!-- CW icon -->
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 8v6h-6"/>
+            <path d="M21 8a8 8 0 1 0-2.34 5.66L21 14"/>
+          </svg>
+        </button>
+
+        <button class="rot" data-idx="1" aria-label="Rotate arrow 2 clockwise">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 8v6h-6"/>
+            <path d="M21 8a8 8 0 1 0-2.34 5.66L21 14"/>
+          </svg>
+        </button>
+
+        <button class="rot" data-idx="2" aria-label="Rotate arrow 3 clockwise">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 8v6h-6"/>
+            <path d="M21 8a8 8 0 1 0-2.34 5.66L21 14"/>
+          </svg>
+        </button>
+
+        <button class="rot" data-idx="3" aria-label="Rotate arrow 4 clockwise">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 8v6h-6"/>
+            <path d="M21 8a8 8 0 1 0-2.34 5.66L21 14"/>
+          </svg>
+        </button>
+      </div>
+
+      <!-- Row 3: Actions -->
+      <div class="actions">
+        <button id="resetBtn" type="button" class="ghost">Reset</button>
+        <button id="checkBtn" type="button" class="primary">Check</button>
+      </div>
+    </div>
+
+    <div class="error" id="msg" role="status" aria-live="polite"></div>
+
+    <audio id="sndOK" src="correct.mp3" preload="auto"></audio>
+    <audio id="sndNo" src="wrong.mp3" preload="auto"></audio>
+  </div>
+</div>
+
+<script>
+  // ===== Configuration =====
+  // Indexing (keep as before): 0=Up, 1=Left, 2=Down, 3=Right
+  const SECRET_PATTERN = [3, 0, 1, 2];
+  const NEXT_PAGE = "output.html";
+
+  const cards = document.getElementById("card");
+  const msg = document.getElementById("msg");
+  const checkBtn = document.getElementById("checkBtn");
+  const resetBtn = document.getElementById("resetBtn");
+  const sndOK = document.getElementById("sndOK");
+  const sndNo = document.getElementById("sndNo");
+
+  // State for logic (mod 4) and accumulated visual turns (monotonic, forces CW)
+  const states = [0, 0, 0, 0];
+  const turns  = [0, 0, 0, 0];
+
+  const arrowEls = [...document.querySelectorAll(".arrow")];
+  const rotBtns  = [...document.querySelectorAll(".rot")];
+
+  // Always increase degrees so CSS transition goes CW
+  function applyRotations(){
+    arrowEls.forEach((el, i) => {
+      el.style.setProperty("--rot", `${90 * turns[i]}deg`);
+    });
+  }
+
+  // One step clockwise
+  function rotateOne(idx){
+    states[idx] = (states[idx] + 3) % 4; // logic step CW
+    turns[idx] += 1;                      // visual step CW
+    applyRotations();
+  }
+
+  function isMatch(a,b){ return a.length === b.length && a.every((v,i)=>v===b[i]); }
+  function shake(){ cards.classList.remove("shake"); void cards.offsetWidth; cards.classList.add("shake"); }
+
+  // Reset: rotate CW until all are "Up" (state 0), never reversing
+  function reset(){
+    for (let i = 0; i < states.length; i++){
+      const delta = (4 - states[i]) % 4; // steps CW to reach 0
+      turns[i]  += delta;                // keep spinning forward
+      states[i]  = 0;                    // logic back to Up
+    }
+    applyRotations();
+    msg.textContent = "";
+  }
+
+  rotBtns.forEach(btn=>{
+    btn.addEventListener("click", () => rotateOne(Number(btn.dataset.idx)));
+  });
+
+  checkBtn.addEventListener("click", async () => {
+    msg.textContent = "";
+    if (isMatch(states, SECRET_PATTERN)) {
+      try{
+        const p = sndOK.play();
+        if (p !== undefined) await p.catch(()=>{});
+        const go = () => window.location.href = NEXT_PAGE;
+        sndOK.onended = go;
+        setTimeout(go, 800);
+      }catch{ window.location.href = NEXT_PAGE; }
+    } else {
+      msg.textContent = "Not quite—try another rotation!";
+      try{
+        const p = sndNo.play();
+        if (p !== undefined) await p.catch(()=>{});
+      }catch{}
+      shake();
+    }
+  });
+
+  resetBtn.addEventListener("click", reset);
+
+  // Initialize
+  applyRotations();
+</script>
+</body>
+</html>

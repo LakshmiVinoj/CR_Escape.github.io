@@ -1,0 +1,142 @@
+<!-- ========================== index.html ========================== -->
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Combo Lock</title>
+  <style>
+    :root{
+      --bg:#0b1020; --card:#121a33; --muted:#9fb3ff; --text:#eaf0ff; --accent:#76e0a2; --warn:#ffd166;
+    }
+    @media (prefers-color-scheme: light){ :root{ --bg:#f4f6ff; --card:#ffffff; --text:#0d1533; --muted:#5060a0; } }
+    *{ box-sizing:border-box }
+    html,body{ height:100% }
+    body{ margin:0; font:16px/1.4 system-ui, -apple-system, Segoe UI, Roboto, sans-serif; color:var(--text); background:radial-gradient(1200px 600px at 20% -10%, #15224d 0%, transparent 60%), var(--bg); display:grid; place-items:center; padding:24px }
+    .wrap{ width:min(720px, 92vw); background:color-mix(in oklab, var(--card) 90%, transparent); border:1px solid color-mix(in oklab, var(--text) 15%, transparent); border-radius:18px; padding:20px; box-shadow:0 18px 40px rgba(0,0,0,.35) }
+    h1{ margin:0 0 4px 0; font-size:22px }
+    p{ margin:.25rem 0 1rem 0; color:var(--muted) }
+
+    .lock{
+      display:grid; grid-template-columns:repeat(3, 1fr); gap:18px; padding:16px; border-radius:16px; background:rgba(255,255,255,.03); border:1px solid color-mix(in oklab, var(--text) 10%, transparent)
+    }
+    .dial{ display:grid; grid-template-rows:auto 1fr auto; gap:10px; align-items:center; justify-items:center; padding:12px; border-radius:14px; border:1px solid color-mix(in oklab, var(--text) 12%, transparent); background:linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02)); }
+    .dial button{ font:20px/1 monospace; width:100%; padding:10px; border-radius:10px; border:1px solid color-mix(in oklab, var(--text) 12%, transparent); background:rgba(255,255,255,.05); color:inherit; cursor:pointer }
+    .dial button:hover{ filter:brightness(1.08) }
+    .num{ font:48px/1.1 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; width:100%; display:grid; place-items:center; height:76px; border-radius:12px; background:rgba(0,0,0,.25); border:1px solid #2a3b77; box-shadow:inset 0 8px 20px rgba(0,0,0,.35) }
+    .dial[data-index="0"] .num span { color: #ff4d4d; } /* red */
+    .dial[data-index="1"] .num span { color: #4d8aff; } /* blue */
+    .dial[data-index="2"] .num span { color: #ffd84d; } /* yellow */
+
+    .actions{ display:flex; gap:12px; margin-top:16px; flex-wrap:wrap }
+    .btn{ padding:10px 14px; border-radius:12px; border:1px solid #2a3b77; background:#0f1a3c; color:var(--text); cursor:pointer }
+    .btn.secondary{ background:#0d2238 }
+
+    .status{ margin-top:14px; font-weight:600 }
+    .ok{ color:var(--accent) }
+
+    audio { display: none; }
+
+    .sr-only{ position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <header>
+      <h1>🔒 Combo Lock</h1>
+      <p>Find the 3-number combo to reveal a secret</p>
+    </header>
+
+    <section class="lock" aria-label="Combo lock" role="group">
+      <div class="dial" data-index="0">
+        <button class="up" aria-label="Increase first number">▲</button>
+        <div class="num" aria-live="polite" aria-atomic="true"><span>0</span></div>
+        <button class="down" aria-label="Decrease first number">▼</button>
+      </div>
+      <div class="dial" data-index="1">
+        <button class="up" aria-label="Increase second number">▲</button>
+        <div class="num" aria-live="polite" aria-atomic="true"><span>0</span></div>
+        <button class="down" aria-label="Decrease second number">▼</button>
+      </div>
+      <div class="dial" data-index="2">
+        <button class="up" aria-label="Increase third number">▲</button>
+        <div class="num" aria-live="polite" aria-atomic="true"><span>0</span></div>
+        <button class="down" aria-label="Decrease third number">▼</button>
+      </div>
+    </section>
+
+    <div class="actions">
+      <button id="check" class="btn">✅ Check</button>
+      <button id="reset" class="btn secondary">↺ Reset</button>
+    </div>
+
+    <div id="status" class="status" role="status" aria-live="polite"></div>
+
+    <!-- Audio files -->
+    <audio id="sound-correct" src="correct.mp3"></audio>
+    <audio id="sound-wrong" src="wrong.mp3"></audio>
+  </main>
+
+  <script>
+    // ====== CONFIG ======
+    const CORRECT = [2,1,0];     // <— set your 3-number solution here
+    const REVEAL_NUMBER = 26;     // <— number to show on reveal.html once solved
+    const REDIRECT_DELAY_MS = 2000; // increased delay to allow full sound play
+
+    // ====== STATE ======
+    const dials = Array.from(document.querySelectorAll('.dial'));
+    const statusEl = document.getElementById('status');
+    const checkBtn = document.getElementById('check');
+    const resetBtn = document.getElementById('reset');
+
+    const soundCorrect = document.getElementById('sound-correct');
+    const soundWrong = document.getElementById('sound-wrong');
+
+    const getVals = () => dials.map(d => parseInt(d.querySelector('.num span').textContent, 10));
+    const setVal = (i, v) => { dials[i].querySelector('.num span').textContent = String(v); };
+
+    function wrapDec(n){ return (n + 9) % 10 } // decreases with wrap-around
+    function wrapInc(n){ return (n + 1) % 10 }  // increases with wrap-around
+
+    function paintStatus(msg, cls){ statusEl.className='status ' + (cls||''); statusEl.textContent = msg; }
+
+    // init all zeros
+    dials.forEach((d,i)=> setVal(i,0));
+
+    // wire buttons
+    dials.forEach((dial, i)=>{
+      const up = dial.querySelector('.up');
+      const down = dial.querySelector('.down');
+
+      up.addEventListener('click', ()=>{
+        const curr = parseInt(dial.querySelector('.num span').textContent, 10);
+        setVal(i, wrapInc(curr));
+      });
+
+      down.addEventListener('click', ()=>{
+        const curr = parseInt(dial.querySelector('.num span').textContent, 10);
+        setVal(i, wrapDec(curr));
+      });
+    });
+
+    checkBtn.addEventListener('click', ()=>{
+      const vals = getVals();
+      const ok = vals.every((v, i)=> v === CORRECT[i]);
+      if(ok){
+        localStorage.setItem('combo_unlocked','true');
+        localStorage.setItem('reveal_number', String(REVEAL_NUMBER));
+        paintStatus('Unlocked! Revealing secret…', 'ok');
+        soundCorrect.play();
+        setTimeout(()=>{ window.location.href = 'output.html'; }, REDIRECT_DELAY_MS);
+      } else {
+        soundWrong.play();
+      }
+    });
+
+    resetBtn.addEventListener('click', ()=>{
+      dials.forEach((_,i)=> setVal(i,0));
+      statusEl.textContent = '';
+    });
+  </script>
+</body>
+</html>
