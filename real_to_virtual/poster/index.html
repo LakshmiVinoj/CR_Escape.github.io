@@ -4,16 +4,30 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>Secret Unlocked</title>
+
 <style>
   body{
     margin:0;
     min-height:100dvh;
     display:grid;
     place-items:center;
-    background:linear-gradient(135deg,#0e1420,#08121a);
+    background:black;
     color:#eaf2ff;
-    font-family:system-ui,-apple-system,Segoe UI,Inter,Roboto,Arial,sans-serif
+    font-family:system-ui,-apple-system,Segoe UI,Inter,Roboto,Arial,sans-serif;
+    cursor:pointer;
   }
+
+  /* Hidden state */
+  body.locked .panel {
+    display: none;
+  }
+
+  /* Revealed state */
+  body.unlocked {
+    background:linear-gradient(135deg,#0e1420,#08121a);
+    cursor:default;
+  }
+
   .panel{
     background:#121a26;
     border:1px solid rgba(255,255,255,.08);
@@ -22,17 +36,18 @@
     box-shadow:0 12px 32px rgba(0,0,0,.35);
     text-align:center
   }
+
   h1{margin:0 0 10px;font-size:1.6rem}
   .secret{font-size:2rem;letter-spacing:.12rem}
 
-  .red { color: #ff3b3b; }
-  .bold { font-weight: 600; }
+  .red{color:#ff3b3b}
+  .bold{font-weight:600}
 </style>
 </head>
-<body>
 
-  <!-- Audio plays when page loads -->
-  <audio autoplay>
+<body class="locked">
+
+  <audio id="success-audio">
     <source src="correct.mp3" type="audio/mpeg">
   </audio>
 
@@ -42,6 +57,16 @@
     <div class="secret">80</div>
     <h3>Please follow the <span class="bold red">red</span> arrows</h3>
   </div>
+
+<script>
+  document.body.addEventListener("click", () => {
+    if (!document.body.classList.contains("unlocked")) {
+      document.body.classList.remove("locked");
+      document.body.classList.add("unlocked");
+      document.getElementById("success-audio").play();
+    }
+  });
+</script>
 
 </body>
 </html>
