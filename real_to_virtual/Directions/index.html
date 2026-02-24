@@ -98,27 +98,32 @@
   }
 
   .rot{
-    width:100%;
-    height:var(--rotH);
-    appearance:none;
-    cursor:pointer;
-    border:1px solid rgba(255,255,255,.12);
-    border-radius:var(--r);
-    background:#0d1520;
-    color:var(--ink);
-    display:grid;
-    place-items:center;
-    transition:filter .15s ease, transform .06s ease;
-    padding:0;
-  }
+  width:100%;
+  height:clamp(70px, 8vw, 100px);
+  appearance:none;
+  cursor:pointer;
+  border:1px solid rgba(255,255,255,.18);
+  border-radius:var(--r);
+  background:#0f1a26;
+  color:#ffffff;
+  display:grid;
+  place-items:center;
+  transition:all .15s ease;
+}
 
-  .rot:hover{ filter:brightness(1.08) }
-  .rot:active{ transform:translateY(2px) }
+.rot:hover{
+  background:#142233;
+  border-color:rgba(255,255,255,.35);
+}
 
-  .rot svg{
-    width:var(--rotI);
-    height:var(--rotI);
-  }
+.rot:active{
+  transform:translateY(2px);
+}
+
+.rot svg{
+  width:clamp(36px, 4vw, 48px);
+  height:clamp(36px, 4vw, 48px);
+}
 
   .actions{
     display:flex;
