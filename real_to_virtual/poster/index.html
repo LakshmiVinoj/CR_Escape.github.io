@@ -6,11 +6,17 @@
 <title>Secret Unlocked</title>
 
 <style>
+  html{
+    font-size: 90px; /* 1rem = 90px */
+  }
+
   body{
     margin:0;
-    min-height:100dvh;
-    display:grid;
-    place-items:center;
+    height:100vh;
+    width:100vw;
+    display:flex;
+    align-items:center;
+    justify-content:center;
     background:black;
     color:#eaf2ff;
     font-family:system-ui,-apple-system,Segoe UI,Inter,Roboto,Arial,sans-serif;
@@ -29,19 +35,47 @@
   }
 
   .panel{
+    width:min(11rem, 90vw); /* ~990px max */
     background:#121a26;
-    border:1px solid rgba(255,255,255,.08);
-    border-radius:22px;
-    padding:30px 34px;
-    box-shadow:0 12px 32px rgba(0,0,0,.35);
-    text-align:center
+    border:0.02rem solid rgba(255,255,255,.08);
+    border-radius:0.35rem;
+    padding:0.8rem;
+    box-shadow:0 0.6rem 1.6rem rgba(0,0,0,.45);
+    text-align:center;
   }
 
-  h1{margin:0 0 10px;font-size:1.6rem}
-  .secret{font-size:2rem;letter-spacing:.12rem}
+  h1{
+    margin:0 0 0.3rem;
+    font-size:0.55rem; /* ~50px */
+  }
 
-  .red{color:#ff3b3b}
-  .bold{font-weight:600}
+  p{
+    font-size:0.38rem; /* ~34px */
+    margin:0 0 0.4rem;
+    color:#cfe0f7;
+  }
+
+  .secret{
+    font-size:0.9rem; /* ~81px */
+    letter-spacing:0.05rem;
+    margin:0.3rem 0 0.5rem;
+    font-weight:650;
+  }
+
+  h3{
+    font-size:0.35rem; /* ~31px */
+    margin:0;
+    font-weight:500;
+  }
+
+  .red{
+    color:#ff3b3b;
+    font-weight:700;
+  }
+
+  .bold{
+    font-weight:700;
+  }
 </style>
 </head>
 
