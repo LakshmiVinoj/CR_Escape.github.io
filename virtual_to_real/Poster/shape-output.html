@@ -5,15 +5,57 @@
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>Secret Unlocked</title>
 <style>
-  body{margin:0;min-height:100dvh;display:grid;place-items:center;
-    background:linear-gradient(135deg,#0e1420,#08121a);color:#eaf2ff;
-    font-family:system-ui,-apple-system,Segoe UI,Inter,Roboto,Arial,sans-serif}
-  .panel{background:#121a26;border:1px solid rgba(255,255,255,.08);
-    border-radius:22px;padding:30px 34px;box-shadow:0 12px 32px rgba(0,0,0,.35);text-align:center}
-  h1{margin:0 0 10px;font-size:1.6rem}
-  .secret{font-size:2rem;letter-spacing:.12rem}
-  .red{color:#ff3b3b}
-  .bold{font-weight:600}
+  html{
+    font-size: 50px; /* 👈 global scale-up */
+  }
+
+  body{
+    margin:0;
+    min-height:100dvh;
+    display:grid;
+    place-items:center;
+    background:linear-gradient(135deg,#0e1420,#08121a);
+    color:#eaf2ff;
+    font-family:system-ui,-apple-system,Segoe UI,Inter,Roboto,Arial,sans-serif;
+  }
+
+  .panel{
+    width:min(650px, 94vw);
+    background:#121a26;
+    border:1px solid rgba(255,255,255,.08);
+    border-radius:28px;
+    padding:52px 46px;
+    box-shadow:0 18px 50px rgba(0,0,0,.45);
+    text-align:center;
+  }
+
+  h1{
+    margin:0 0 18px;
+    font-size:2.5rem;
+    letter-spacing:.4px;
+  }
+
+  .secret{
+    font-size:1.8rem;
+    letter-spacing:.08rem;
+    margin:10px 0 26px;
+    color:#cfe0f7;
+  }
+
+  h3{
+    margin:0;
+    font-size:1.5rem;
+    font-weight:500;
+  }
+
+  .red{
+    color:#ff3b3b;
+    font-weight:700;
+  }
+
+  .bold{
+    font-weight:700;
+  }
 </style>
 </head>
 <body>
