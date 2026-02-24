@@ -4,22 +4,83 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>Puzzle Cleared</title>
+
 <style>
-  body{margin:0;min-height:100dvh;display:grid;place-items:center;
-    background:linear-gradient(135deg,#0e1420,#08121a);color:#eaf2ff;
-    font-family:system-ui,-apple-system,Segoe UI,Inter,Roboto,Arial,sans-serif}
-  .panel{background:#121a26;border:1px solid rgba(255,255,255,.08);
-    border-radius:22px;padding:30px 34px;box-shadow:0 12px 32px rgba(0,0,0,.35);text-align:center}
-  h1{margin:0 0 10px;font-size:1.6rem}
-  p{margin:0;color:#b7c6d9}
-  .grey { color: #808080; }
+  :root{
+    --bg1:#0e1420;
+    --bg2:#08121a;
+    --panel:#121a26;
+    --ink:#eaf2ff;
+    --sub:#cfe3ff;
+    --success:#7CFFB2;
+  }
+
+  *{ box-sizing:border-box; }
+
+  body{
+    margin:0;
+    min-height:100dvh;
+    display:grid;
+    place-items:center;
+    background:linear-gradient(135deg,var(--bg1),var(--bg2));
+    color:var(--ink);
+    font-family:system-ui,-apple-system,Segoe UI,Inter,Roboto,Arial,sans-serif;
+    padding:20px;
+  }
+
+  .panel{
+    background:var(--panel);
+    border:1px solid rgba(255,255,255,.10);
+    border-radius:28px;
+    padding:clamp(32px,4vw,56px);
+    width:min(520px, 92vw);
+    text-align:center;
+
+    box-shadow:
+      0 22px 60px rgba(0,0,0,.45),
+      inset 0 0 0 1px rgba(255,255,255,.03);
+
+    animation:fadeIn .5s ease-out;
+  }
+
+  h1{
+    margin:0 0 18px;
+    font-size:clamp(30px,4vw,42px);
+    letter-spacing:.5px;
+  }
+
+  .success{
+    font-size:clamp(18px,2.4vw,22px);
+    font-weight:600;
+    color:var(--success);
+    margin-bottom:26px;
+  }
+
+  .follow{
+    font-size:clamp(18px,2.4vw,22px);
+    font-weight:500;
+    color:var(--sub);
+  }
+
+  .white{
+    color:#ffffff;
+    font-weight:700;
+  }
+
+  @keyframes fadeIn{
+    from{ opacity:0; transform:translateY(8px); }
+    to{ opacity:1; transform:translateY(0); }
+  }
 </style>
 </head>
+
 <body>
   <div class="panel">
-    <h1>✅ Nicely done!</h1>
-    <p><strong>Exit has opened 🔓</strong></p>
-    <h3>Please follow the <span class="grey">white</span> arrows</h3>
+    <h1>Nicely done! 🎉</h1>
+    <div class="success">Exit has opened 🔓</div>
+    <div class="follow">
+      Please follow the <span class="white">white</span> arrows
+    </div>
   </div>
 </body>
 </html>
