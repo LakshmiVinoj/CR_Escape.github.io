@@ -1,4 +1,11 @@
-<style>
+<!-- ========================== index.html ========================== -->
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Combo Lock</title>
+  <style>
   :root{
     --bg:#0b1020; --card:#121a33; --muted:#9fb3ff; --text:#eaf0ff; --accent:#76e0a2; --warn:#ffd166;
   }
@@ -138,3 +145,108 @@
     .lock{ grid-template-columns:1fr; }
   }
 </style>
+</head>
+<body>
+  <main class="wrap">
+    <header>
+      <h1>🔒 Combo Lock</h1>
+      <p>Find the 3-number combo to reveal a secret</p>
+    </header>
+
+    <section class="lock" aria-label="Combo lock" role="group">
+      <div class="dial" data-index="0">
+        <button class="up" aria-label="Increase first number">▲</button>
+        <div class="num" aria-live="polite" aria-atomic="true"><span>0</span></div>
+        <button class="down" aria-label="Decrease first number">▼</button>
+      </div>
+      <div class="dial" data-index="1">
+        <button class="up" aria-label="Increase second number">▲</button>
+        <div class="num" aria-live="polite" aria-atomic="true"><span>0</span></div>
+        <button class="down" aria-label="Decrease second number">▼</button>
+      </div>
+      <div class="dial" data-index="2">
+        <button class="up" aria-label="Increase third number">▲</button>
+        <div class="num" aria-live="polite" aria-atomic="true"><span>0</span></div>
+        <button class="down" aria-label="Decrease third number">▼</button>
+      </div>
+    </section>
+
+    <div class="actions">
+      <button id="check" class="btn">✅ Check</button>
+      <button id="reset" class="btn secondary">↺ Reset</button>
+    </div>
+
+    <div id="status" class="status" role="status" aria-live="polite"></div>
+
+    <!-- Audio files -->
+    <audio id="sound-correct" src="correct.mp3"></audio>
+    <audio id="sound-wrong" src="wrong.mp3"></audio>
+  </main>
+
+  <script>
+    // ====== CONFIG ======
+    const CORRECT = [2,1,0];       // <— set your 3-number solution here
+    const REVEAL_NUMBER = 26;      // <— number to show on output.html once solved
+    const REDIRECT_DELAY_MS = 2000; // increased delay to allow full sound play
+
+    // ====== STATE ======
+    const dials = Array.from(document.querySelectorAll('.dial'));
+    const statusEl = document.getElementById('status');
+    const checkBtn = document.getElementById('check');
+    const resetBtn = document.getElementById('reset');
+
+    const soundCorrect = document.getElementById('sound-correct');
+    const soundWrong = document.getElementById('sound-wrong');
+
+    const getVals = () => dials.map(d => parseInt(d.querySelector('.num span').textContent, 10));
+    const setVal = (i, v) => { dials[i].querySelector('.num span').textContent = String(v); };
+
+    function wrapDec(n){ return (n + 9) % 10 } // decreases with wrap-around
+    function wrapInc(n){ return (n + 1) % 10 }  // increases with wrap-around
+
+    function paintStatus(msg, cls){
+      statusEl.className='status ' + (cls||'');
+      statusEl.textContent = msg;
+    }
+
+    // init all zeros
+    dials.forEach((d,i)=> setVal(i,0));
+
+    // wire buttons
+    dials.forEach((dial, i)=>{
+      const up = dial.querySelector('.up');
+      const down = dial.querySelector('.down');
+
+      up.addEventListener('click', ()=>{
+        const curr = parseInt(dial.querySelector('.num span').textContent, 10);
+        setVal(i, wrapInc(curr));
+      });
+
+      down.addEventListener('click', ()=>{
+        const curr = parseInt(dial.querySelector('.num span').textContent, 10);
+        setVal(i, wrapDec(curr));
+      });
+    });
+
+    checkBtn.addEventListener('click', ()=>{
+      const vals = getVals();
+      const ok = vals.every((v, i)=> v === CORRECT[i]);
+      if(ok){
+        localStorage.setItem('combo_unlocked','true');
+        localStorage.setItem('reveal_number', String(REVEAL_NUMBER));
+        paintStatus('Unlocked! Revealing secret…', 'ok');
+        soundCorrect.play();
+        setTimeout(()=>{ window.location.href = 'output.html'; }, REDIRECT_DELAY_MS);
+      } else {
+        paintStatus('Not quite—try again.', '');
+        soundWrong.play();
+      }
+    });
+
+    resetBtn.addEventListener('click', ()=>{
+      dials.forEach((_,i)=> setVal(i,0));
+      statusEl.textContent = '';
+    });
+  </script>
+</body>
+</html>
