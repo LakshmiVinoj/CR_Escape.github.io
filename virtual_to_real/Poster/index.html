@@ -23,20 +23,17 @@
   }
 
   .wrap{
-    min-height:100%;
-    display:grid;
-    place-items:center;
-    padding:0.6rem; /* ~54px */
-  }
+  height:100vh;
+  width:100vw;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
 
-  .card{
-    width:min(14rem,95vw); /* ~1260px max */
-    background:var(--card);
-    border:0.02rem solid rgba(255,255,255,.07);
-    border-radius:0.3rem;
-    box-shadow:0 0.5rem 1.2rem rgba(0,0,0,.45);
-    padding:0.6rem;
-  }
+.card{
+  width:min(14rem, 90vw);
+  margin:0 auto;
+}
 
   h1{
     margin:0 0 0.15rem;
