@@ -9,51 +9,149 @@
     --bg:#0b0f14; --card:#111a24; --ink:#e8f0fb; --sub:#a9bfd7;
     --accent:#48b3ff; --ok:#37d67a; --bad:#ff5e6a;
   }
-  html,body{height:100%;margin:0;background:linear-gradient(180deg,#081019,#0f1a26);color:var(--ink);
-    font-family:system-ui,-apple-system,Segoe UI,Inter,Roboto,Arial,sans-serif}
-  .wrap{min-height:100%;display:grid;place-items:center;padding:24px}
-  .card{width:min(860px,95vw);background:var(--card);border:1px solid rgba(255,255,255,.07);
-    border-radius:20px;box-shadow:0 12px 34px rgba(0,0,0,.35);padding:26px 22px}
-  h1{margin:0 0 6px;font-size:1.35rem}
-  p{margin:0 0 16px;color:var(--sub)}
-  .row{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+
+  html{
+    font-size: 50px; /* 👈 global scale-up for iPad */
+  }
+
+  html,body{
+    height:100%;
+    margin:0;
+    background:linear-gradient(180deg,#081019,#0f1a26);
+    color:var(--ink);
+    font-family:system-ui,-apple-system,Segoe UI,Inter,Roboto,Arial,sans-serif;
+  }
+
+  .wrap{
+    min-height:100%;
+    display:grid;
+    place-items:center;
+    padding:36px;
+  }
+
+  .card{
+    width:min(980px,96vw);
+    background:var(--card);
+    border:1px solid rgba(255,255,255,.07);
+    border-radius:26px;
+    box-shadow:0 16px 46px rgba(0,0,0,.45);
+    padding:40px 34px;
+  }
+
+  h1{
+    margin:0 0 10px;
+    font-size:2.1rem;
+    letter-spacing:.3px;
+  }
+
+  p{
+    margin:0 0 22px;
+    color:var(--sub);
+    font-size:1.2rem;
+    line-height:1.4;
+  }
+
+  .row{
+    display:flex;
+    gap:18px;
+    justify-content:center;
+    flex-wrap:wrap;
+  }
 
   /* Code slots */
-  .slots{margin:14px 0 18px}
-  .slot{
-    width:82px;height:82px;border-radius:16px;background:#0e1722;display:grid;place-items:center;
-    border:1px dashed rgba(255,255,255,.12)
+  .slots{
+    margin:22px 0 26px;
   }
-  .slot svg{width:56px;height:56px;display:block;}
+
+  .slot{
+    width:110px;
+    height:110px;
+    border-radius:20px;
+    background:#0e1722;
+    display:grid;
+    place-items:center;
+    border:2px dashed rgba(255,255,255,.14);
+  }
+
+  .slot svg{
+    width:78px;
+    height:78px;
+    display:block;
+  }
 
   /* Shape buttons */
-  .shapes{margin-top:4px}
-  button.shape{
-    display:flex;align-items:center;gap:10px;cursor:pointer;border:1px solid rgba(255,255,255,.12);
-    border-radius:14px;background:#0d1520;color:var(--ink);padding:12px 14px;font-weight:600;
-    transition:filter .2s ease, transform .06s ease
+  .shapes{
+    margin-top:10px;
   }
-  button.shape:hover{filter:brightness(1.08)}
-  button.shape:active{transform:translateY(1px)}
-  button.shape svg{width:22px;height:22px}
+
+  button.shape{
+    display:flex;
+    align-items:center;
+    gap:14px;
+    cursor:pointer;
+    border:1px solid rgba(255,255,255,.14);
+    border-radius:18px;
+    background:#0d1520;
+    color:var(--ink);
+    padding:18px 20px;
+    font-weight:650;
+    font-size:1.25rem;
+    transition:filter .2s ease, transform .06s ease;
+    min-height:64px; /* nicer tap target */
+  }
+
+  button.shape:hover{ filter:brightness(1.08); }
+  button.shape:active{ transform:translateY(1px); }
+  button.shape svg{ width:32px; height:32px; }
 
   /* Actions */
-  .actions{display:flex;gap:12px;justify-content:center;margin-top:12px}
+  .actions{
+    display:flex;
+    gap:16px;
+    justify-content:center;
+    margin-top:18px;
+  }
+
   .primary{
-    cursor:pointer;border:0;border-radius:14px;padding:12px 18px;font-weight:700;
-    background:var(--ok);color:#062913;transition:transform .06s ease, filter .2s ease
+    cursor:pointer;
+    border:0;
+    border-radius:18px;
+    padding:18px 26px;
+    font-weight:800;
+    font-size:1.2rem;
+    background:var(--ok);
+    color:#062913;
+    transition:transform .06s ease, filter .2s ease;
+    min-height:60px;
   }
+
   .ghost{
-    cursor:pointer;border:1px solid rgba(255,255,255,.12);background:transparent;color:var(--ink);
-    border-radius:14px;padding:12px 16px;font-weight:600
+    cursor:pointer;
+    border:1px solid rgba(255,255,255,.14);
+    background:transparent;
+    color:var(--ink);
+    border-radius:18px;
+    padding:18px 24px;
+    font-weight:650;
+    font-size:1.2rem;
+    min-height:60px;
   }
-  .error{text-align:center;color:var(--bad);min-height:22px;margin-top:10px}
-  .shake{animation:shake .35s linear}
+
+  .error{
+    text-align:center;
+    color:var(--bad);
+    min-height:30px;
+    margin-top:16px;
+    font-size:1.15rem;
+  }
+
+  .shake{ animation:shake .35s linear; }
+
   @keyframes shake{
-    10%,90%{transform:translateX(-1px)}
-    20%,80%{transform:translateX(2px)}
-    30%,50%,70%{transform:translateX(-4px)}
-    40%,60%{transform:translateX(4px)}
+    10%,90%{ transform:translateX(-2px); }
+    20%,80%{ transform:translateX(4px); }
+    30%,50%,70%{ transform:translateX(-7px); }
+    40%,60%{ transform:translateX(7px); }
   }
 
   /* Shape colors */
