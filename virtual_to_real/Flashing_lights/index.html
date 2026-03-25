@@ -127,7 +127,6 @@
 <body>
   <div class="panel">
     <h1>Light Flash Sequence</h1>
-    <p>The lights slowly flash in this repeating order: red × 4, blue × 7, green × 6.</p>
 
     <div class="lights">
       <div class="light-wrap">
@@ -145,7 +144,6 @@
     </div>
 
     <div class="status" id="status">Starting sequence...</div>
-    <div class="sequence">Sequence: R R R R → B B B B B B B → G G G G G G</div>
   </div>
 
   <script>
@@ -170,7 +168,6 @@
 
     async function flash(lightEl, colorName, count) {
       for (let i = 1; i <= count; i++) {
-        status.textContent = `${colorName} flash ${i} of ${count}`;
         lightEl.classList.add("on");
         await wait(flashOnTime);
         lightEl.classList.remove("on");
