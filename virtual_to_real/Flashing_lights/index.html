@@ -20,7 +20,7 @@
 
     body {
       margin: 0;
-      min-height: 100vh;
+      min-height: 100dvh;
       display: grid;
       place-items: center;
       background: radial-gradient(circle at top, #1e293b 0%, var(--bg) 60%);
@@ -30,39 +30,30 @@
     }
 
     .panel {
-      width: min(700px, 100%);
+      width: 100%;
+      max-width: 1000px;
       background: rgba(17, 24, 39, 0.95);
       border: 1px solid rgba(255,255,255,0.08);
       border-radius: 24px;
-      padding: 32px;
+      padding: clamp(24px, 5vw, 60px);
       text-align: center;
       box-shadow: 0 18px 40px rgba(0,0,0,0.35);
-    }
-
-    h1 {
-      margin: 0 0 10px;
-      font-size: clamp(1.8rem, 4vw, 2.6rem);
-    }
-
-    p {
-      margin: 0 0 26px;
-      color: var(--muted);
-      font-size: 1.05rem;
-      line-height: 1.5;
     }
 
     .lights {
       display: flex;
       justify-content: center;
-      gap: 28px;
+      align-items: center;
+      gap: clamp(30px, 6vw, 80px);
       margin: 28px 0 22px;
-      flex-wrap: wrap;
+      flex-wrap: nowrap;
     }
 
     .light-wrap {
       display: grid;
-      gap: 12px;
+      gap: 16px;
       justify-items: center;
+      flex: 1;
     }
 
     .label {
@@ -70,11 +61,12 @@
       letter-spacing: 0.04em;
       text-transform: uppercase;
       color: var(--muted);
+      font-size: clamp(1.2rem, 2.5vw, 2rem);
     }
 
     .light {
-      width: 120px;
-      height: 120px;
+      width: min(30vw, 260px);
+      height: min(30vw, 260px);
       border-radius: 50%;
       background: var(--off);
       border: 3px solid rgba(255,255,255,0.08);
@@ -110,17 +102,38 @@
         0 0 72px rgba(34, 197, 94, 0.45);
     }
 
-    .status {
-      font-size: 1rem;
-      color: #cbd5e1;
-      min-height: 1.5em;
-      margin-top: 10px;
+    @media (max-width: 900px) {
+      .lights {
+        gap: 24px;
+      }
+
+      .light {
+        width: min(26vw, 220px);
+        height: min(26vw, 220px);
+      }
     }
 
-    .sequence {
-      margin-top: 14px;
-      color: var(--muted);
-      font-size: 0.98rem;
+    @media (max-width: 700px) {
+      body {
+        padding: 16px;
+      }
+
+      .panel {
+        padding: 24px 16px;
+      }
+
+      .lights {
+        gap: 18px;
+      }
+
+      .light {
+        width: min(25vw, 180px);
+        height: min(25vw, 180px);
+      }
+
+      .label {
+        font-size: clamp(1rem, 2.2vw, 1.4rem);
+      }
     }
   </style>
 </head>
@@ -146,11 +159,10 @@
     const redLight = document.getElementById("redLight");
     const blueLight = document.getElementById("blueLight");
     const greenLight = document.getElementById("greenLight");
-    const status = document.getElementById("status");
 
-    const flashOnTime = 650;   // how long each light stays on
-    const flashOffTime = 350;  // pause between flashes
-    const groupPause = 700;    // pause between color groups
+    const flashOnTime = 650;
+    const flashOffTime = 350;
+    const groupPause = 700;
 
     function wait(ms) {
       return new Promise(resolve => setTimeout(resolve, ms));
@@ -162,7 +174,7 @@
       greenLight.classList.remove("on");
     }
 
-    async function flash(lightEl, colorName, count) {
+    async function flash(lightEl, count) {
       for (let i = 1; i <= count; i++) {
         lightEl.classList.add("on");
         await wait(flashOnTime);
@@ -174,15 +186,15 @@
     async function runSequence() {
       while (true) {
         allOff();
-        await flash(redLight, "Red", 4);
+        await flash(redLight, 4);
         await wait(groupPause);
 
         allOff();
-        await flash(blueLight, "Blue", 7);
+        await flash(blueLight, 7);
         await wait(groupPause);
 
         allOff();
-        await flash(greenLight, "Green", 6);
+        await flash(greenLight, 6);
         await wait(groupPause);
       }
     }
