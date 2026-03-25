@@ -1,1 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Flashing Lights Sequence</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --panel: #111827;
+      --text: #e5e7eb;
+      --muted: #94a3b8;
+      --off: #1f2937;
+      --red: #ef4444;
+      --blue: #3b82f6;
+      --green: #22c55e;
+    }
 
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      background: radial-gradient(circle at top, #1e293b 0%, var(--bg) 60%);
+      font-family: Arial, Helvetica, sans-serif;
+      color: var(--text);
+      padding: 24px;
+    }
+
+    .panel {
+      width: min(700px, 100%);
+      background: rgba(17, 24, 39, 0.95);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 24px;
+      padding: 32px;
+      text-align: center;
+      box-shadow: 0 18px 40px rgba(0,0,0,0.35);
+    }
+
+    h1 {
+      margin: 0 0 10px;
+      font-size: clamp(1.8rem, 4vw, 2.6rem);
+    }
+
+    p {
+      margin: 0 0 26px;
+      color: var(--muted);
+      font-size: 1.05rem;
+      line-height: 1.5;
+    }
+
+    .lights {
+      display: flex;
+      justify-content: center;
+      gap: 28px;
+      margin: 28px 0 22px;
+      flex-wrap: wrap;
+    }
+
+    .light-wrap {
+      display: grid;
+      gap: 12px;
+      justify-items: center;
+    }
+
+    .label {
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .light {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      background: var(--off);
+      border: 3px solid rgba(255,255,255,0.08);
+      box-shadow: inset 0 0 18px rgba(0,0,0,0.55);
+      transition: background 0.35s ease, box-shadow 0.35s ease, transform 0.2s ease;
+    }
+
+    .light.on {
+      transform: scale(1.04);
+    }
+
+    .light.red.on {
+      background: var(--red);
+      box-shadow:
+        0 0 18px var(--red),
+        0 0 36px rgba(239, 68, 68, 0.75),
+        0 0 72px rgba(239, 68, 68, 0.45);
+    }
+
+    .light.blue.on {
+      background: var(--blue);
+      box-shadow:
+        0 0 18px var(--blue),
+        0 0 36px rgba(59, 130, 246, 0.75),
+        0 0 72px rgba(59, 130, 246, 0.45);
+    }
+
+    .light.green.on {
+      background: var(--green);
+      box-shadow:
+        0 0 18px var(--green),
+        0 0 36px rgba(34, 197, 94, 0.75),
+        0 0 72px rgba(34, 197, 94, 0.45);
+    }
+
+    .status {
+      font-size: 1rem;
+      color: #cbd5e1;
+      min-height: 1.5em;
+      margin-top: 10px;
+    }
+
+    .sequence {
+      margin-top: 14px;
+      color: var(--muted);
+      font-size: 0.98rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="panel">
+    <h1>Light Flash Sequence</h1>
+    <p>The lights slowly flash in this repeating order: red × 4, blue × 7, green × 6.</p>
+
+    <div class="lights">
+      <div class="light-wrap">
+        <div id="redLight" class="light red"></div>
+        <div class="label">Red</div>
+      </div>
+      <div class="light-wrap">
+        <div id="blueLight" class="light blue"></div>
+        <div class="label">Blue</div>
+      </div>
+      <div class="light-wrap">
+        <div id="greenLight" class="light green"></div>
+        <div class="label">Green</div>
+      </div>
+    </div>
+
+    <div class="status" id="status">Starting sequence...</div>
+    <div class="sequence">Sequence: R R R R → B B B B B B B → G G G G G G</div>
+  </div>
+
+  <script>
+    const redLight = document.getElementById("redLight");
+    const blueLight = document.getElementById("blueLight");
+    const greenLight = document.getElementById("greenLight");
+    const status = document.getElementById("status");
+
+    const flashOnTime = 650;   // how long each light stays on
+    const flashOffTime = 350;  // pause between flashes
+    const groupPause = 700;    // pause between color groups
+
+    function wait(ms) {
+      return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    function allOff() {
+      redLight.classList.remove("on");
+      blueLight.classList.remove("on");
+      greenLight.classList.remove("on");
+    }
+
+    async function flash(lightEl, colorName, count) {
+      for (let i = 1; i <= count; i++) {
+        status.textContent = `${colorName} flash ${i} of ${count}`;
+        lightEl.classList.add("on");
+        await wait(flashOnTime);
+        lightEl.classList.remove("on");
+        await wait(flashOffTime);
+      }
+    }
+
+    async function runSequence() {
+      while (true) {
+        allOff();
+        await flash(redLight, "Red", 4);
+        await wait(groupPause);
+
+        allOff();
+        await flash(blueLight, "Blue", 7);
+        await wait(groupPause);
+
+        allOff();
+        await flash(greenLight, "Green", 6);
+        await wait(groupPause);
+      }
+    }
+
+    runSequence();
+  </script>
+</body>
+</html>
